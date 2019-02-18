@@ -89,21 +89,21 @@ patch_script $UNITY$BINPATH/pix3lify
 
 if [ "$PX1" ] || [ "$PX1XL" ] || [ "$PX2" ] || [ "$PX2XL" ] || [ "$PX3" ] || [ "$PX3XL" ] || [ "$N5X" ] || [ "$N6P" ] || [ "$OOS" ]; then
   ui_print " "
-  log_print "   Pix3lify is only for non-Google devices!"
-  log_print "   DO YOU WANT TO IGNORE OUR WARNINGS AND RISK A BOOTLOOP?"
+  log_print "   Call Screening will enable"
+  log_print "   DO YOU WANT TO ENABLE?"
   log_print "   Vol Up = Yes, Vol Down = No"
   if $VKSEL; then
     ui_print " "
-    log_print "   Ignoring warnings..."
+    log_print "   Waiting for files..."
   else
     ui_print " "
-    log_print "   Exiting..."
+    log_print "   Exiting from installer..."
     abort >> $INSTLOG 2>&1
   fi
 fi
 
 ui_print " "
-log_print "   Removing remnants from past Pix3lify installs..."
+log_print "   Removing remnants from past Screening and others installs..."
 # Removes /data/resource-cache/overlays.list
 OVERLAY='/data/resource-cache/overlays.list'
 if [ -f "$OVERLAY" ]; then
@@ -120,121 +120,12 @@ if [ "$SLIM" == false -a "$FULL" == false -a "$OVER" == false -a "$BOOT" == fals
       SLIM=true >> $INSTLOG 2>&1
     else
       FULL=true >> $INSTLOG 2>&1
-    fi
-    if "$FULL"; then
-      if "$OOS"; then
-        log_print "   Pix3lify overlay has been known to not work and cause issues on devices running OxygenOS!"
-        log_print "   DO YOU WANT TO IGNORE OUR WARNINGS AND RISK A BOOTLOOP?"
-        log_print "   Vol Up = Yes, Vol Down = No"
-        if $VKSEL; then
-          ui_print " "
-          log_print "   Ignoring warnings..."
-        fi
       fi
-      ui_print " "
-      log_print " - Overlay Options -"
-      log_print "   Do you want the Pixel overlays enabled?"
-      log_print "   Vol Up = Yes, Vol Down = No"
-      if $VKSEL; then
-        OVER=true >> $INSTLOG 2>&1
-        ui_print " "
-        log_print " - Accent Options -"
-        log_print "   Do you want the Pixel accent enabled?"
-        log_print "   Vol Up = Yes, Vol Down = No"
-        if $VKSEL; then
-          ACC=true >> $INSTLOG 2>&1
-        fi
-      fi
-          ui_print " "
-          log_print " - Overlay Options -"
-          log_print "   Do you want the Pixel overlays enabled?"
-          log_print "   Vol Up = Yes, Vol Down = No"
-          if $VKSEL; then
-            OVER=true >> $INSTLOG 2>&1
-            ui_print " "
-            log_print " - Accent Options -"
-            log_print "   Do you want the Pixel accent enabled?"
-            log_print "   Vol Up = Yes, Vol Down = No"
-            if $VKSEL; then
-              ACC=true >> $INSTLOG 2>&1
-            fi
-          fi
+     fi
     fi
-    ui_print " "
-    log_print " - Animation Options -"
-    log_print "   Do you want the Pixel boot animation?"
-    log_print "   Vol Up = Yes, Vol Down = No"
-    if $VKSEL; then
-      BOOT=true >> $INSTLOG 2>&1
-    fi
-else
-  log_print " Options specified in zip name!"
-fi
-
-if [ ! -f "$BINPATH/curl" ]; then
-  cp_ch $INSTALLER/curl $UNITY$BINPATH/curl
-fi
-
-# had to break up volume options this way for basename zip for users without working vol keys
-if $SLIM; then
-  ui_print " "
-  log_print "   Enabling slim mode..."
-  sed -ri "s/name=(.*)/name=\1 (SLIM)/" $INSTALLER/module.prop
-  rm -rf $INSTALLER/system/app >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/fonts >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/lib >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/lib64 >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/media >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/priv-app >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/vendor/overlay/DisplayCutoutEmulationCorner >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/vendor/overlay/DisplayCutoutEmulationDouble >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/vendor/overlay/DisplayCutoutEmulationTall >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/vendor/overlay/DisplayCutoutNoCutout >> $INSTLOG 2>&1
-  rm -rf $INSTALLER/system/vendor/overlay/Pixel >> $INSTLOG 2>&1
-  rm -rf /data/resource-cache >> $INSTLOG 2>&1
-fi
-
-if $FULL; then
-  ui_print " "
-  log_print " Full mode selected..."
-  sed -ri "s/name=(.*)/name=\1 (FULL)/" $INSTALLER/module.prop
-  prop_process $INSTALLER/common/full.prop
-  if $OVER; then
-    ui_print " "
-    log_print "   Enabling overlay features..."
-  else
-    ui_print " "
-    log_print "   Disabling overlay features..."
-    rm -f $INSTALLER/system/vendor/overlay/Pix3lify.apk >> $INSTLOG 2>&1
-    rm -rf /data/resource-cache >> $INSTLOG 2>&1
-    rm -rf /data/dalvik-cache >> $INSTLOG 2>&1
-    log_print "   Dalvik-Cache has been cleared!"
-    log_print "   Next boot may take a little longer to boot!"
+   fi
   fi
-  if $ACC; then
-    ui_print " "
-    log_print "   Enabling Pixel accent..."
-  else
-    ui_print " "
-    log_print "   Disabling Pixel accent..."
-    sed -i 's/ro.boot.vendor.overlay.theme/# ro.boot.vendor.overlay.theme/g' $INSTALLER/common/system.prop
-    rm -rf $INSTALLER/system/vendor/overlay/Pixel >> $INSTLOG 2>&1
-    rm -rf /data/resource-cache >> $INSTLOG 2>&1
-  fi
-fi
-
-if $BOOT; then
-  ui_print " "
-  log_print "   Enabling boot animation..."
-  cp_ch -i $INSTALLER/common/bootanimation.zip $UNITY$BFOLDER$BZIP
-
-else
-  ui_print " "
-  log_print "   Disabling boot animation..."
-fi
-
-if [ $API -ge 27 ]; then
-  rm -rf $INSTALLER/system/framework  >> $INSTLOG 2>&1
+ fi
 fi
 
 if [ $API -ge 28 ]; then
@@ -252,22 +143,6 @@ if [ $API -ge 28 ]; then
     patch_xml -s $DPF '/map/boolean[@name="__data_rollout__SpeakEasy.SpeakEasyDetailsRollout__launched__"]' "true" >> $INSTLOG 2>&1
     patch_xml -s $DPF '/map/boolean[@name="__data_rollout__SpeakEasy.CallScreenOnPixelTwoRollout__launched__"]' "true" >> $INSTLOG 2>&1
     patch_xml -s $DPF '/map/boolean[@name="G__speakeasy_postcall_survey_enabled"]' "true" >> $INSTLOG 2>&1
-  fi
-fi
-
-if [ "$SLIM" == "false" ]; then
-  ui_print " "
-  log_print "   Enabling Google's Flip to Shhh..."
-  ui_print " "
-  # Enabling Google's Flip to Shhh
-  WELLBEING_PREF_FILE=$INSTALLER/common/PhenotypePrefs.xml
-  chmod 660 $WELLBEING_PREF_FILE
-  WELLBEING_PREF_FOLDER=$(find /data/data/com.google.android.apps.wellbeing* -name "shared_prefs")
-  mkdir -p $WELLBEING_PREF_FOLDER
-  cp_ch $WELLBEING_PREF_FILE $WELLBEING_PREF_FOLDER
-  if $MAGISK && $BOOTMODE; then
-    magiskpolicy --live "create system_server sdcardfs file" "allow system_server sdcardfs file { write }"
-    am force-stop "com.google.android.apps.wellbeing"
   fi
 fi
 
