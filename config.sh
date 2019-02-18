@@ -96,8 +96,7 @@ log_start() {
   echo "    *********************************************" >> $INSTLOG 2>&1
   echo "    *                 $VER                      *" >> $INSTLOG 2>&1
   echo "    *********************************************" >> $INSTLOG 2>&1
-  echo "    *      Joey Huab, Aidan Holland, Pika       *" >> $INSTLOG 2>&1
-  echo "    *   John Fawkes, Laster K. (lazerl0rd)      *" >> $INSTLOG 2>&1
+  echo "    *               Gabriel Howard              *" >> $INSTLOG 2>&1
   echo "    *********************************************" >> $INSTLOG 2>&1
   echo " " >> $INSTLOG 2>&1
   log_handler "Starting module installation script"
