@@ -1,6 +1,6 @@
 # CallScreeningEnabler
 ## README.md
-### Copyright (C) 2017-2018, J0S3Gabriel
+### Copyright (C) 2018-2019, Gabriel Howard
 
 
 

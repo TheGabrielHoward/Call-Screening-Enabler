@@ -1,7 +1,7 @@
-id=callscreeningTest
+id=callscreeningJ0S3
 name=Call Screening Enabler
-version=v3.0.3
-versionCode=303
+version=v3.0.2
+versionCode=302
 author=Gabriel Howard
-description=Only for testing lol
+description=This module activates the Call Screening in any AOSP Pie ROM
 minMagisk=17000
